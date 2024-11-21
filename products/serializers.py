@@ -7,7 +7,7 @@ class ProductSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ProductsModel
 		fields = '__all__'
-		read_only_fields = ('created', 'updated',"views")
+		read_only_fields = ('created', 'updated',"views","id")
 
 	def validate_name(self, value):
 		if ProductsModel.objects.filter(name=value).exists():
@@ -18,6 +18,7 @@ class ProductSerializer2(serializers.ModelSerializer):
 	class Meta:
 		model = ProductsModel
 		fields = "__all__"
+		read_only_fields = ('id',)
 		extra_kwargs = {
 			'name':{"required":False},
 			"category":{"required":False},

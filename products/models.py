@@ -3,7 +3,6 @@ from django.db import models
 
 
 class ProductsModel(models.Model):
-	# category = models.ManyToManyField(CategoriesModel, related_name='products')
 	name = models.CharField(max_length=200)
 	description = models.TextField()
 	price = models.PositiveBigIntegerField()

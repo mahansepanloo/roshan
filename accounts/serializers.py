@@ -10,6 +10,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
 		fields = ('username', 'password', 'password2')
+		read_only_fields = ('id',)
 
 	def create(self, validated_data):
 		del validated_data['password2']
