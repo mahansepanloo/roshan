@@ -19,6 +19,5 @@ def save_top(self):
                 top_products = category.product.order_by('-views')[:1]
                 for product in top_products:
                     writer.writerow([category.name, product.name, product.views])
-            print('mahansepanlooghajar')
     except Exception as e:
         return self.retry(exc=e, max_retries=10)
