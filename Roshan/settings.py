@@ -148,15 +148,12 @@ REST_FRAMEWORK = {
 #celery
 CELERY_BROKER_URL = 'amqp://localhost'
 
-CELERY_ROUTES = {
-    'bus_app.tasks.send_email_to_customer': {'queue': 'celery'},
-}
 
 CELERY_BEAT_SCHEDULE = {
-    'send_email_to_admin':
+    'save_top_csv':
         {
-            'task': 'bus_app.tasks.send_email_to_admin',
-            'schedule': timedelta(hours=24),
+            'task': 'products.tasks.save_top',
+            'schedule': timedelta(minutes=1),
         }
 }
 
@@ -171,3 +168,5 @@ CACHES = {
         }
     }
 }
+
+

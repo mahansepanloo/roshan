@@ -37,7 +37,7 @@ class ShowProductCategorySerializer(serializers.ModelSerializer):
 
 
 class AddProductCategorySerializer(serializers.Serializer):
-    product = serializers.SerializerMethodField()
+    product = serializers.IntegerField()
 
 
 
