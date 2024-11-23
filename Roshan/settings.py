@@ -1,6 +1,8 @@
 from datetime import timedelta
 import environ
 from pathlib import Path
+env = environ.Env()
+environ.Env.read_env(".env")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,10 +12,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-628959r0z7z9s=528l2^4bf^^wb+^xs2$iqrw3f-&d8skl2jap"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = []
 
@@ -75,10 +77,10 @@ WSGI_APPLICATION = "Roshan.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': "Roshan",
-        'USER': 'postgres',
-        'PASSWORD': 'MAHKAT@78',
-        'HOST': 'localhost',
+        'NAME': env("NAME"),
+        'USER': env("USER"),
+        'PASSWORD': env("PASSWORD"),
+        'HOST': env("HOST"),
         'PORT': '5432',
     }
 }
