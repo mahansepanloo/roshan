@@ -13,6 +13,10 @@ from rest_framework import status
 
 
 class AddShowCategorysViews(generics.ListCreateAPIView):
+    """
+    post : admin create category
+    get : all user see categories
+    """
     queryset = CategoriesModel.objects.all()
     serializer_class = CategoryCSerializer
     def get_permissions(self):
@@ -24,20 +28,33 @@ class AddShowCategorysViews(generics.ListCreateAPIView):
 
 
 class EditDeleteCategoryViews(generics.RetrieveUpdateDestroyAPIView):
+    """
+    admin edit and delete category
+    """
+
     queryset = CategoriesModel.objects.all()
     serializer_class = CategoryESerializer
     permission_classes = [IsAdminUser]
 
 class ShowAddPCategoryViews(APIView):
+
     def setup(self, request, *args, **kwargs):
         self.category = get_object_or_404(CategoriesModel, id = kwargs['id'])
         return super().setup(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        """
+        see all categories
+        """
+        serializer_class = ShowProductCategorySerializer
         product = ShowProductCategorySerializer(instance=self.category)
         return Response(data = product.data, status = status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
+        """
+        admin add product to category
+        """
+        serializer_class = AddProductCategorySerializer
         if not request.user.is_staff:
             return Response({'detail': 'You do not have permission to perform this action.'},
                 status=status.HTTP_403_FORBIDDEN)

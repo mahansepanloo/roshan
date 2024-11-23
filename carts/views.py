@@ -10,6 +10,9 @@ from rest_framework import status
 from .carts import Cart
 
 class CartViews(APIView):
+    """
+    show cart
+    """
     def get(self, request):
         carts = Cart(request)
         data = carts.cart
@@ -18,6 +21,10 @@ class CartViews(APIView):
 
 
 class AddViews(APIView):
+    """
+    add cart
+    """
+    serializers_class = AddCartSerializer
     def post(self, request, product_id):
         product = get_object_or_404(ProductsModel, id=product_id)
         carts = Cart(request)
@@ -32,6 +39,9 @@ class AddViews(APIView):
 
 
 class RemoveViews(APIView):
+    """
+    remove product from cart
+    """
     def delete(self, request, product_id):
         product = get_object_or_404(ProductsModel, id=product_id)
         carts = Cart(request)
@@ -40,6 +50,9 @@ class RemoveViews(APIView):
 
 
 class ClearViews(APIView):
+    """
+    clear cart
+    """
     def delete(self, request):
         carts = Cart(request)
         carts.clear()

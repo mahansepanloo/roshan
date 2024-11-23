@@ -11,7 +11,11 @@ from rest_framework.authtoken.models import Token
 
 
 
-class UserRegistersViwe(APIView):
+class UserRegistersView(APIView):
+	"""
+	register user
+	"""
+	serializer_class = UserRegisterSerializer
 	def post(self, request):
 		ser_data = UserRegisterSerializer(data=request.data)
 		if ser_data.is_valid():
@@ -23,7 +27,11 @@ class UserRegistersViwe(APIView):
 
 
 
-class LogoutViwe(APIView):
+class LogoutView(APIView):
+	"""
+	logout user and remove token
+	"""
+
 	permission_classes = [IsAuthenticated]
 	def post(self, request):
 		user = request.user

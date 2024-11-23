@@ -23,3 +23,11 @@ class ProductsModel(models.Model):
 	def __str__(self):
 		return f"{self.name} - view {self.views}"
 
+
+
+class ViewssModel(models.Model):
+	userip = models.CharField()
+	product = models.ForeignKey(ProductsModel, on_delete=models.CASCADE, related_name='viewsss')
+
+	def __str__(self):
+		return f"{self.userip}"

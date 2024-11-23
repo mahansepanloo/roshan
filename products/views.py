@@ -13,6 +13,9 @@ from django.shortcuts import get_object_or_404
 
 
 class AddProductsView(generics.ListCreateAPIView):
+    """
+   just admin can create products and see all products
+    """
     queryset = ProductsModel.objects.all()
     serializer_class = ProductSerializer
 
@@ -24,17 +27,29 @@ class AddProductsView(generics.ListCreateAPIView):
         return super(AddProductsView, self).get_permissions()
 
 class EditedProductsView(APIView):
+    serializer_class = ProductSerializer
     def setup(self, request, *args, **kwargs):
         self.product = get_object_or_404(ProductsModel, id=kwargs['id'])
         return super().setup( request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        """
+        see products
+        """
+        ip = get_ip(request)
+        user = ViewssModel.objects.filter(userip=ip)
+        if not user.exists():
+            ViewssModel.objects.create(userip=ip, product = self.product)
+            self.product.views += 1
+            self.product.save()
         serializer = ProductSerializer(self.product)
-        self.product.views += 1
-        self.product.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+        
     def put(self, request, *args, **kwargs):
+        """
+        admin can edit products
+        """
         if not request.user.is_staff:
             return Response({'detail': 'You do not have permission to perform this action.'},
                             status=status.HTTP_403_FORBIDDEN)
@@ -45,6 +60,9 @@ class EditedProductsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
+        """
+        admin can delete products
+        """
         if not request.user.is_staff:
             return Response({'detail': 'You do not have permission to perform this action.'},
                             status=status.HTTP_403_FORBIDDEN)

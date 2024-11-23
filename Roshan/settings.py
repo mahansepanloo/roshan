@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
-    ""
+    'drf_spectacular',
     #app
     "accounts.apps.AccountsConfig",
     'carts.apps.OrdersConfig',
@@ -132,6 +132,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20
 
@@ -169,4 +171,13 @@ CACHES = {
     }
 }
 
+
+#swager
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Roshan',
+    'DESCRIPTION': ' project description',
+    'VERSION': '1.0.0',
+
+}
 
