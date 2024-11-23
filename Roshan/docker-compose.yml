@@ -1,0 +1,58 @@
+version: '3.8'  # یا نسخه‌ای که مناسب است  
+
+services:  # این کلید الزامی است  
+  web:  
+    build: .  
+    container_name: web  
+    command: python manage.py runserver 0.0.0.0:8000  
+    depends_on:  
+      - postgres  
+    environment:  
+      - DEBUG=True  
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres  
+    networks:  
+      - main  
+    restart: always  
+
+  postgres:  
+    image: postgres:latest  
+    container_name: postgres  
+    environment:  
+      - POSTGRES_DB=postgres  
+      - POSTGRES_USER=postgres  
+      - POSTGRES_PASSWORD=postgres  
+    networks:  
+      - main  
+    volumes:  
+      - postgres_data:/var/lib/postgresql/data  
+    restart: always  
+
+  rabbitmq:  
+    image: rabbitmq:management  
+    container_name: rabbitmq  
+    ports:  
+      - "15672:15672"  
+      - "5672:5672"  
+    networks:  
+      - main  
+    restart: always  
+  
+  celery_beat:  
+    build: .   
+    container_name: celery_beat  
+    command: "celery -A Roshan beat "  
+    depends_on:  
+      - web  
+      - rabbitmq  
+      - postgres  
+    environment:  
+      - C_FORCE_ROOT=true  
+    networks:  
+      - main  
+    restart: always  
+
+networks:  
+  main:   
+
+volumes:  
+  postgres_data:
