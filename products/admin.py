@@ -8,4 +8,4 @@ class ProductsAdmin(admin.ModelAdmin):
 
 @admin.register(ViewssModel)
 class ViewsModelAdmin(admin.ModelAdmin):
-    passg
+    pass
