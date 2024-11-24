@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
     'drf_spectacular',
+    "django_celery_beat",
     #app
     "accounts.apps.AccountsConfig",
     'carts.apps.OrdersConfig',
@@ -151,16 +152,25 @@ REST_FRAMEWORK = {
 
 #celery
 CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True  
 
+#
+# CELERY_BEAT_SCHEDULE = {
+#     'check_positions':
+#         {
+#             'task': 'products.tasks.save_top',
+#             'schedule': timedelta(minutes=1),
+#         }
+# }
 
-CELERY_BEAT_SCHEDULE = {
-    'check_positions':
-        {
-            'task': 'products.tasks.save_top',
-            'schedule': timedelta(minutes=1),
-        }
-}
+from celery.schedules import crontab  
 
+CELERY_BEAT_SCHEDULE = {  
+    'my-task-every-day-at-2am': {  
+        'task': 'products.tasks.my_task',  
+        'schedule': crontab(hour=2, minute=0), 
+    },  
+} 
 
 
 CACHES = {
