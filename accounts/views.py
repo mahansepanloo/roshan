@@ -4,7 +4,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import *
 from rest_framework import status
+from django.core.cache import cache
 from rest_framework.authtoken.models import Token
+from random import randint
 
 
 
@@ -18,12 +20,42 @@ class UserRegistersView(APIView):
 	serializer_class = UserRegisterSerializer
 	def post(self, request):
 		ser_data = UserRegisterSerializer(data=request.data)
+		code = randint(100,999)
+		print(code)
 		if ser_data.is_valid():
-			ser_data.create(ser_data.validated_data)
+			info = {
+			'username' : ser_data.validated_data['username'],
+			'password' : ser_data.validated_data['password'],
+			'otp': code
+			}
+
+			phone_number = ser_data.validated_data['phone_number']
+			cache.set(phone_number, info, timeout = 120 )
+			request.session['phone_number'] = phone_number
 			return Response(ser_data.data, status=status.HTTP_201_CREATED)
 		return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+	
 
 
+class OtpCodeView(APIView):
+	"""
+		check otp code and create_user
+	"""
+	serializer_class = OtpSerializers
+	def post(self, request):
+		otp = OtpSerializers(data=request.data)
+		if otp.is_valid():
+			otp_code = cache.get(request.session['phone_number'])
+			if not otp_code:
+				return Response('not found code', status=status.HTTP_400_BAD_REQUEST)
+			if otp_code['otp'] == otp.validated_data['code']:
+				User.objects.create_user(username = otp_code['username'],
+							  password = otp_code['password'])
+				cache.delete(request.session['phone_number'])
+				return Response('create user', status=status.HTTP_200_OK)
+			return Response('not found code', status=status.HTTP_400_BAD_REQUEST)
+
+			
 
 
 
