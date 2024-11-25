@@ -1,58 +1,81 @@
-version: '3.8'  # یا نسخه‌ای که مناسب است  
+version: '3.8'  
 
-services:  # این کلید الزامی است  
-  web:  
-    build: .  
-    container_name: web  
-    command: python manage.py runserver 0.0.0.0:8000  
-    depends_on:  
-      - postgres  
-    environment:  
-      - DEBUG=True  
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres  
+services:  
+  rabbitmq:  
+    container_name: rabbitmq  
+    image: rabbitmq:latest  
     networks:  
       - main  
+    ports:  
+      - "5672:5672"  
     restart: always  
+
+  web:  
+    container_name: web  
+    build: .  
+    ports:  
+      - "8000:8000"  
+    volumes:  
+      - .:/code  
+    depends_on:  
+      - postgres  
+      - redis  
+    environment:  
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres  
+      - REDIS_URL=redis://redis:6379/1  
+    networks:  
+      - main  
+    command: sh -c "python manage.py migrate && gunicorn Roshan.wsgi:application -b 0.0.0.0:8000"  
 
   postgres:  
-    image: postgres:latest  
     container_name: postgres  
-    environment:  
-      - POSTGRES_DB=postgres  
-      - POSTGRES_USER=postgres  
-      - POSTGRES_PASSWORD=postgres  
-    networks:  
-      - main  
+    image: postgres:13  
     volumes:  
       - postgres_data:/var/lib/postgresql/data  
-    restart: always  
-
-  rabbitmq:  
-    image: rabbitmq:management  
-    container_name: rabbitmq  
-    ports:  
-      - "15672:15672"  
-      - "5672:5672"  
+    environment:  
+      POSTGRES_DB: postgres  
+      POSTGRES_USER: postgres   
+      POSTGRES_PASSWORD: postgres  
     networks:  
       - main  
-    restart: always  
-  
-  celery_beat:  
-    build: .   
-    container_name: celery_beat  
-    command: "celery -A Roshan beat "  
+    ports:  
+      - "5432:5432"  
+    restart: always   
+
+  redis:  
+    container_name: redis  
+    image: redis:6  
+    networks:  
+      - main  
+
+  celery:  
+    container_name: celery  
+    build: .  
+    command: celery -A Roshan worker --loglevel=info  
     depends_on:  
       - web  
-      - rabbitmq  
+      - redis  
       - postgres  
+      - rabbitmq  
     environment:  
       - C_FORCE_ROOT=true  
     networks:  
       - main  
-    restart: always  
 
-networks:  
-  main:   
+  celery-beat:  
+    container_name: celery-beat  
+    build: .  
+    command: celery -A Roshan beat --loglevel=info  
+    depends_on:  
+      - web  
+      - redis  
+      - postgres  
+      - rabbitmq  
+    networks:  
+      - main  
 
 volumes:  
-  postgres_data:
+  postgres_data:  
+  
+networks:  
+  main:

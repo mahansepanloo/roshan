@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
     'drf_spectacular',
-    "django_celery_beat",
     #app
     "accounts.apps.AccountsConfig",
     'carts.apps.OrdersConfig',
@@ -75,17 +74,16 @@ WSGI_APPLICATION = "Roshan.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env("NAME"),
-        'USER': env("USER"),
-        'PASSWORD': env("PASSWORD"),
-        'HOST': env("HOST"),
-        'PORT': '5432',
-    }
-}
-
+DATABASES = {  
+    'default': {  
+        'ENGINE': 'django.db.backends.postgresql',  
+        'NAME': 'postgres',  
+        'USER': 'postgres',  
+        'PASSWORD': 'postgres',  
+        'HOST': 'postgres',  
+        'PORT': '5432', 
+    }  
+}  
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -151,8 +149,8 @@ REST_FRAMEWORK = {
 
 
 #celery
-CELERY_BROKER_URL = 'amqp://localhost'
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True  
+CELERY_BROKER_URL = 'amqp://rabbitmq:5672//'  
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 #
 # CELERY_BEAT_SCHEDULE = {
@@ -168,7 +166,7 @@ from celery.schedules import crontab
 CELERY_BEAT_SCHEDULE = {  
     'my-task-every-day-at-2am': {  
         'task': 'products.tasks.my_task',  
-        'schedule': crontab(hour=2, minute=0), 
+        'schedule': 2.0,
     },  
 } 
 
@@ -176,7 +174,7 @@ CELERY_BEAT_SCHEDULE = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://redis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
