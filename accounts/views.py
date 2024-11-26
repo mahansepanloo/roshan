@@ -7,7 +7,7 @@ from rest_framework import status
 from django.core.cache import cache
 from rest_framework.authtoken.models import Token
 from random import randint
-
+from .sms import send_otp_code
 
 
 
@@ -32,6 +32,7 @@ class UserRegistersView(APIView):
 			phone_number = ser_data.validated_data['phone_number']
 			cache.set(phone_number, info, timeout = 120 )
 			request.session['phone_number'] = phone_number
+			# send_otp_code(phone_number,code)
 			return Response(ser_data.data, status=status.HTTP_201_CREATED)
 		return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
 	

@@ -1,6 +1,9 @@
 from datetime import timedelta
 import environ
+import os
 from pathlib import Path
+
+
 env = environ.Env()
 environ.Env.read_env(".env")
 
@@ -15,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG=env("DEBUG")
+DEBUG=env("DEBUG",default=False)
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
 
@@ -39,7 +42,6 @@ INSTALLED_APPS = [
     "products.apps.ProductsConfig",
     "categories.apps.CategoriesConfig",
 ]
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -48,6 +50,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "Roshan.middleware.LoggerMiddleware",
+    
+
+
 ]
 
 ROOT_URLCONF = "Roshan.urls"
@@ -74,17 +80,28 @@ WSGI_APPLICATION = "Roshan.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {  
+#     'default': {  
+#         'ENGINE': 'django.db.backends.postgresql',  
+#         'NAME': 'postgres',  
+#         'USER': 'postgres',  
+#         'PASSWORD': 'postgres',  
+#         'HOST': 'postgres',  
+#         'PORT': '5432', 
+#     }  
+# }  
+
 DATABASES = {  
     'default': {  
         'ENGINE': 'django.db.backends.postgresql',  
-        'NAME': 'postgres',  
-        'USER': 'postgres',  
-        'PASSWORD': 'postgres',  
-        'HOST': 'postgres',  
+        'NAME': env('NAME'),  
+        'USER': env('USER'),  
+        'PASSWORD': env('PASSWORD'),  
+        'HOST': env('HOST'),  
         'PORT': '5432', 
     }  
 }  
-
+ 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -120,6 +137,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -152,21 +170,14 @@ REST_FRAMEWORK = {
 CELERY_BROKER_URL = 'amqp://rabbitmq:5672//'  
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
-#
-# CELERY_BEAT_SCHEDULE = {
-#     'check_positions':
-#         {
-#             'task': 'products.tasks.save_top',
-#             'schedule': timedelta(minutes=1),
-#         }
-# }
+
 
 from celery.schedules import crontab  
 
 CELERY_BEAT_SCHEDULE = {  
     'my-task-every-day-at-2am': {  
         'task': 'products.tasks.my_task',  
-        'schedule': 2.0,
+        'schedule': timedelta(hours=1),
     },  
 } 
 

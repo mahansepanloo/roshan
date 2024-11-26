@@ -30,3 +30,11 @@ class ProductSerializer2(serializers.ModelSerializer):
 		}
 
 
+class CommentSerializers(serializers.ModelSerializer):  
+	class Meta:  
+		model = CommentModel  
+		fields = "__all__" 
+		read_only_fields = ('user', "product")
+
+		
+

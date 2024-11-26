@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 
 class ProductsModel(models.Model):
@@ -28,6 +28,20 @@ class ProductsModel(models.Model):
 class ViewssModel(models.Model):
 	userip = models.CharField()
 	product = models.ForeignKey(ProductsModel, on_delete=models.CASCADE, related_name='viewsss')
+	time = models.DateField(auto_now_add=True)
 
 	def __str__(self):
 		return f"{self.userip}"
+	
+
+
+class CommentModel(models.Model):
+	product = models.ForeignKey(ProductsModel,on_delete=models.CASCADE,related_name='pcomment')
+	reply = models.ForeignKey('self',on_delete=models.CASCADE,related_name='rcomment',null=True,blank=True)
+	is_reply = models.BooleanField(default=False)
+	user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='ucomment')
+	comment = models.TextField()
+	created_at = models.DateTimeField(auto_now_add=True)
+	
+	def __str__ (self):
+		return self.product.name

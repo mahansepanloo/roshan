@@ -9,3 +9,7 @@ class ProductsAdmin(admin.ModelAdmin):
 @admin.register(ViewssModel)
 class ViewsModelAdmin(admin.ModelAdmin):
     pass
+
+@admin.register(CommentModel)
+class CommentAdmin(admin.ModelAdmin):
+    pass
