@@ -80,16 +80,6 @@ WSGI_APPLICATION = "Roshan.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {  
-#     'default': {  
-#         'ENGINE': 'django.db.backends.postgresql',  
-#         'NAME': 'postgres',  
-#         'USER': 'postgres',  
-#         'PASSWORD': 'postgres',  
-#         'HOST': 'postgres',  
-#         'PORT': '5432', 
-#     }  
-# }  
 
 DATABASES = {  
     'default': {  
@@ -102,6 +92,17 @@ DATABASES = {
     }  
 }  
  
+# DATABASES = {  
+#     'default': {  
+#         'ENGINE': 'django.db.backends.postgresql',  
+#         'NAME': "roshan",  
+#         'USER': "postgres",  
+#         'PASSWORD': "MAHKAT@78",  
+#         'HOST': "localhost",  
+#         'PORT': '5432', 
+#     }  
+# }  
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -167,7 +168,8 @@ REST_FRAMEWORK = {
 
 
 #celery
-CELERY_BROKER_URL = 'amqp://rabbitmq:5672//'  
+# CELERY_BROKER_URL = 'amqp://rabbitmq:5672//'  
+CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq:5672//'  
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 
@@ -178,6 +180,8 @@ CELERY_BEAT_SCHEDULE = {
     'my-task-every-day-at-2am': {  
         'task': 'products.tasks.my_task',  
         'schedule': timedelta(hours=1),
+        
+
     },  
 } 
 
