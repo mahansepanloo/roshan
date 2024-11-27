@@ -29,9 +29,10 @@ class AddViews(APIView):
         product = get_object_or_404(ProductsModel, id=product_id)
         carts = Cart(request)
         serializer = AddCartSerializer(data=request.data)
-        if product.stock < serializer.validated_data['num']:
-            return Response('can not add more stock ', status=status.HTTP_403_FORBIDDEN)
+        
         if serializer.is_valid():
+            if product.stock < serializer.validated_data['num']:
+                return Response('can not add more stock ', status=status.HTTP_403_FORBIDDEN)
             quantity = serializer.validated_data['num']
             carts.add(product, quantity)
             return Response("add cart", status=status.HTTP_201_CREATED)
