@@ -10,15 +10,15 @@ from .serializers import *
 from rest_framework import status
 
 
-
-
 class AddShowCategorysViews(generics.ListCreateAPIView):
     """
     post : admin create category
     get : all user see categories
     """
+
     queryset = CategoriesModel.objects.all()
     serializer_class = CategoryCSerializer
+
     def get_permissions(self):
         if self.request.method == "POST":
             self.permission_classes = [IsAdminUser]
@@ -36,10 +36,11 @@ class EditDeleteCategoryViews(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CategoryESerializer
     permission_classes = [IsAdminUser]
 
+
 class ShowAddPCategoryViews(APIView):
 
     def setup(self, request, *args, **kwargs):
-        self.category = get_object_or_404(CategoriesModel, id = kwargs['id'])
+        self.category = get_object_or_404(CategoriesModel, id=kwargs["id"])
         return super().setup(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -48,7 +49,7 @@ class ShowAddPCategoryViews(APIView):
         """
         serializer_class = ShowProductCategorySerializer
         product = ShowProductCategorySerializer(instance=self.category)
-        return Response(data = product.data, status = status.HTTP_200_OK)
+        return Response(data=product.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
@@ -56,22 +57,22 @@ class ShowAddPCategoryViews(APIView):
         """
         serializer_class = AddProductCategorySerializer
         if not request.user.is_staff:
-            return Response({'detail': 'You do not have permission to perform this action.'},
-                status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         serializer = AddProductCategorySerializer(data=request.data)
         if serializer.is_valid():
-            product_id = serializer.validated_data.get('product')
+            product_id = serializer.validated_data.get("product")
             try:
                 product = ProductsModel.objects.get(id=product_id)
             except ProductsModel.DoesNotExist:
-                return Response({'detail': 'Product not found.'},status=status.HTTP_404_NOT_FOUND)
+                return Response(
+                    {"detail": "Product not found."}, status=status.HTTP_404_NOT_FOUND
+                )
             self.category.product.add(product)
-            return Response({'detail': 'Product added to category successfully.'},status=status.HTTP_200_OK)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-
-
+            return Response(
+                {"detail": "Product added to category successfully."},
+                status=status.HTTP_200_OK,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
